@@ -4,7 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/mattn/go-gtk/gtk"
+	"github.com/gotk3/gotk3/gtk"
 )
 
 func init() {
