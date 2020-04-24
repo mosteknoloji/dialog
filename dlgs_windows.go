@@ -7,7 +7,7 @@ import (
 	"unicode/utf16"
 	"unsafe"
 
-	"github.com/mosteknoloji/w32"
+	"github.com/TheTitanrain/w32"
 )
 
 type WinDlgError int
@@ -19,7 +19,7 @@ func (e WinDlgError) Error() string {
 func err() error {
 	e := w32.CommDlgExtendedError()
 	if e == 0 {
-		return Cancelled
+		return ErrCancelled
 	}
 	return WinDlgError(e)
 }
@@ -124,7 +124,7 @@ type dirdlg struct {
 }
 
 func selectdir(b *DirectoryBuilder) (d dirdlg) {
-	d.bi = &w32.BROWSEINFO{Flags: w32.BIF_RETURNONLYFSDIRS}
+	d.bi = &w32.BROWSEINFO{Flags: w32.BIF_RETURNONLYFSDIRS | w32.BIF_NEWDIALOGSTYLE}
 	if b.Dlg.Title != "" {
 		d.bi.Title, _ = syscall.UTF16PtrFromString(b.Dlg.Title)
 	}
@@ -135,7 +135,7 @@ func (b *DirectoryBuilder) browse() (string, error) {
 	d := selectdir(b)
 	res := w32.SHBrowseForFolder(d.bi)
 	if res == 0 {
-		return "", Cancelled
+		return "", ErrCancelled
 	}
 	return w32.SHGetPathFromIDList(res), nil
 }
